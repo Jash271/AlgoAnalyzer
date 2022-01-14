@@ -9,14 +9,14 @@ setuptools.setup(
     name='AlgoAnalyzer',
     license="MIT",
     description='AlgoAnalyzer is a package for designing your trading strategies and run simulations to backtest your strategies and check their robustness',
-    version='v0.0.1',
+    version='v0.0.2',
     long_description_content_type='text/markdown',
     long_description=open('Readme.md',encoding="utf-8").read(),
     
     url='https://github.com/Jash271/AlgoAnalyzer',
     packages=setuptools.find_packages(),
     
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=['yfinance','plotly'],
     classifiers=[
         'Development Status :: 4 - Beta',
