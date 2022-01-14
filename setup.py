@@ -16,7 +16,7 @@ setuptools.setup(
     url='https://github.com/Jash271/AlgoAnalyzer',
     packages=setuptools.find_packages(),
     
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=['yfinance','plotly'],
     classifiers=[
         'Development Status :: 4 - Beta',
