@@ -8,9 +8,9 @@ import datetime
 import json
 
 
-from .techicals.ema_crossover import moving_average_ema as e
-from .techicals.sma_crossover import moving_average_sma as s
-from .techicals.macd import macd as m
+from .technicals.ema_crossover import moving_average_ema as e
+from .technicals.sma_crossover import moving_average_sma as s
+from .technicals.macd import macd as m
 
 class Analyzer:
     def __init__(self, Jobs):
