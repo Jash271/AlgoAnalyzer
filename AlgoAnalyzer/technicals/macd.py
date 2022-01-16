@@ -35,6 +35,9 @@ def macd(Job, pid):
     )
     df["signal"] = df.macd.ewm(span=9, min_periods=1).mean()
     df = df.iloc[adj_len:, :]
+
+    dates_1 = [dates[0]]
+    actions = [0]
     cash_on_hand = Job["Capital"]
     position = 0  # 1 denotes taking a long position
     long_positions = []
@@ -51,7 +54,7 @@ def macd(Job, pid):
 
         if (curr_macd > curr_signal) and (prev_signal > prev_macd) and (position == 0):
             # Generate Buy Signal
-
+            actions.append(1)
             shares = int(cash_on_hand / df.iloc[i]["Close"])
             investment_value = shares * df.iloc[i]["Close"]
             cash_on_hand -= investment_value
@@ -65,11 +68,12 @@ def macd(Job, pid):
             long_positions.append(d)
             position = 1
 
-        if "stop_Loss" in Job and position == 1:
+        elif "stop_Loss" in Job and position == 1:
             if df.iloc[i]["Close"] < long_positions[-1]["Buy_Price"] * (
                 1 - (Job["stop_Loss"] / 100)
             ):
                 # Generate Sell Signal
+                actions.append(2)
                 shares = long_positions[-1]["Shares"]
                 investment_value = shares * df.iloc[i]["Close"]
                 cash_on_hand += investment_value
@@ -88,8 +92,9 @@ def macd(Job, pid):
                 square_offs.append(d)
                 position = 0
 
-        if (curr_macd < curr_signal) and (prev_macd > prev_signal) and (position == 1):
+        elif (curr_macd < curr_signal) and (prev_macd > prev_signal) and (position == 1):
             # Square of the Position
+            actions.append(-1)
             prev_position = long_positions[-1]
             new_value = df.iloc[i]["Close"] * prev_position["Shares"]
             cash_on_hand += new_value
@@ -105,7 +110,9 @@ def macd(Job, pid):
 
             square_offs.append(d)
             position = 0
-
+        else:
+            actions.append(0)
+    df["Signal"] = actions
     summary["Net_PL"] = net_pl
     summary["Buy_Signals"] = long_positions
     summary["Sell_Signals"] = square_offs

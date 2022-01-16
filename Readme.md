@@ -55,7 +55,7 @@
 
 ### Charts will be generated for each strategy and the charts will be saved as interactive html files in the same directory as the python file.
 
-### Final Results will be saved in a {timestamp}_results.json.json file in the same directory as the python file.
+### Final Results will be saved in a {timestamp}_results.json file in the same directory as the python file.
 ---
 
 ## Sample code to demonstrate the whole process
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 if __name__ == "__main__":
 ```
 ---
-## Output as obtained in the {timestamp}_results.json.json file
+###  Output as obtained in the {timestamp}_results.json file
 ```
 {
     "summary": [
@@ -374,7 +374,7 @@ if __name__ == "__main__":
 }
 ```
 ---
-## Analyzing the Output
+### Analyzing the Output
 
 - ### The `Net_PL` is the total profit/loss of the strategy.
 - ### The `Buy_Signals` is a list of all the buy signals.

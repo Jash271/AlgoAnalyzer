@@ -35,14 +35,18 @@ def moving_average_ema(Job, pid):
         df[s_label] = df.Close.ewm(span=Job["Short_Term_Period"], min_periods=1).mean()
 
         df = df.iloc[adj_len:, :]
+        # Take Position on the Start Day 
 
         # Caculate NetPl
+        dates_1 = [dates[0]]
+        actions = [0]
         cash_on_hand = Job["Capital"]
         position = 0  # 1 denotes taking a long position
         long_positions = []
         square_offs = []
         summary = {}
         net_pl = 0
+        
 
         for i in range(1, len(df)):
             curr_long = df.iloc[i][l_label]
@@ -56,7 +60,7 @@ def moving_average_ema(Job, pid):
                 and (position == 0)
             ):
                 # Generate Buy Signal
-
+                actions.append(1)
                 shares = int(cash_on_hand / df.iloc[i]["Close"])
                 investment_value = shares * df.iloc[i]["Close"]
                 cash_on_hand -= investment_value
@@ -71,8 +75,8 @@ def moving_average_ema(Job, pid):
                 position = 1
 
             # check if stop_Loss key exists in Job
-            if "stop_Loss" in Job and position == 1:
-
+            elif "stop_Loss" in Job and position == 1:
+                actions.append(2)
                 flag = long_positions[-1]["Buy_Price"] * (1 - (Job["stop_Loss"] * 0.01))
                 print(flag, long_positions[-1]["Buy_Price"])
                 if df.iloc[i]["Close"] < flag:
@@ -99,13 +103,14 @@ def moving_average_ema(Job, pid):
                     square_offs.append(d)
                     position = 0
 
-            if (
+            elif (
                 (curr_short < curr_long)
                 and (prev_short > prev_long)
                 and (position == 1)
             ):
 
                 # Square of the Position
+                actions.append(-1)
                 prev_position = long_positions[-1]
                 new_value = df.iloc[i]["Close"] * prev_position["Shares"]
                 cash_on_hand += new_value
@@ -121,7 +126,11 @@ def moving_average_ema(Job, pid):
 
                 square_offs.append(d)
                 position = 0
+            else:
+                actions.append(0)
 
+        df["Signal"] = actions  
+        summary["Cash_on_Hand"] = cash_on_hand
         summary["Net_PL"] = net_pl
         summary["Buy_Signals"] = long_positions
         summary["Sell_Signals"] = square_offs
@@ -133,6 +142,7 @@ def moving_average_ema(Job, pid):
 
         data = {}
         tick = Job["Ticker"]
+        
         m=chart.generate_and_save_chart(df,Job,pid)
         summary["Chart"] = m
         data[f"{pid}_{tick}_{category}"] = summary

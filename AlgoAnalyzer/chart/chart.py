@@ -7,6 +7,12 @@ import os
 
 def generate_and_save_chart(df, Job,pid):
     # PLot candlestick data on the graph with lines of moving average and highlight points of intersection
+    # filter df where signal==1
+    buys = df[df["Signal"] == 1]
+    sells = df[df["Signal"] == -1]
+    sl = df[df["Signal"] == 2]
+    
+    
     method = Job["Method"]
     name = Job["Ticker"]
     l = Job["Long_Term_Period"]
@@ -20,7 +26,7 @@ def generate_and_save_chart(df, Job,pid):
         "high": df.High,
         "low": df.Low,
         "type": "candlestick",
-        "name": Job["Ticker"],
+        "name": Job["Ticker"].split(".")[0],
         "showlegend": True,
     }
     trace2 = {
@@ -28,7 +34,7 @@ def generate_and_save_chart(df, Job,pid):
         "y": df[ltp],
         "type": "scatter",
         "mode": "lines",
-        "line": {"width": 1, "color": "blue"},
+        "line": {"width": 1, "color": "black"},
         "name": f"Moving average_{l}",
         "showlegend": True,
     }
@@ -41,8 +47,11 @@ def generate_and_save_chart(df, Job,pid):
         "name": f"Moving average_{s}",
         "showlegend": True,
     }
+
     data = [trace1, trace2, trace3]
-    layout = go.Layout({"title": {"text": f'{Job["Ticker"]}', "font": {"size": 15}}})
+    
+    name = Job["Ticker"].split(".")[0]
+    layout = go.Layout({"title": {"text": f'{name}', "font": {"size": 15}}})
     fig = go.Figure(data=data, layout=layout)
 
     
@@ -68,6 +77,7 @@ def generate_and_save_chart(df, Job,pid):
 def generate_macd_chart(df,Job,pid):
     # Plot candle stick chart from df
     name = Job["Ticker"]
+    
     
     """trace1 = {
         "x": df.index,
@@ -103,8 +113,14 @@ def generate_macd_chart(df,Job,pid):
         "showlegend": True,
         
     }
+    
+    
+
+    
     data = [trace2, trace3]
-    layout = go.Layout({"title": {"text": f'{Job["Ticker"]}', "font": {"size": 15}}})
+    name = Job["Ticker"].split(".")[0]
+
+    layout = go.Layout({"title": {"text": f'{name}', "font": {"size": 15}}})
     fig = go.Figure(data=data, layout=layout)
     date = datetime.datetime.now().isoformat()
     date=date.replace(".","_")
@@ -126,14 +142,15 @@ def generate_macd_chart(df,Job,pid):
         "high": df.High,
         "low": df.Low,
         "type": "candlestick",
-        "name": Job["Ticker"],
+        "name": Job["Ticker"].split(".")[0],
         "showlegend": True,
         
     }
     
 
     data = [trace1]
-    layout = go.Layout({"title": {"text": f'{Job["Ticker"]}', "font": {"size": 15}}})
+    name = Job["Ticker"].split(".")[0]
+    layout = go.Layout({"title": {"text": f'{name}', "font": {"size": 15}}})
     fig = go.Figure(data=data, layout=layout)
     date = datetime.datetime.now().isoformat()
     name = name.split(".")[0]
